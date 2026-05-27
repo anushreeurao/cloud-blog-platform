@@ -82,7 +82,7 @@ Inkflow/
 
 1️⃣ Clone the Repository
 
-git clone https://github.com/YourName/Inkflow.git
+git clone https://github.com/anushreeurao/cloud-blog-platform.git
 
 
 2️⃣ Navigate to Project Directory
