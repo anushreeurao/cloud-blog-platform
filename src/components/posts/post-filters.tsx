@@ -1,22 +1,25 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 export function PostFilters({ tags }: { tags: string[] }) {
-  const searchParams = useSearchParams();
   const router = useRouter();
-  const [query, setQuery] = useState(searchParams.get("q") ?? "");
+  const searchParams =
+    typeof window !== "undefined"
+      ? new URLSearchParams(window.location.search)
+      : null;
+  const [query, setQuery] = useState(searchParams?.get("q") ?? "");
 
-  const activeTag = searchParams.get("tag") ?? "";
+  const activeTag = searchParams?.get("tag") ?? "";
 
   const tagList = useMemo(() => ["all", ...tags], [tags]);
 
   function applyFilters(nextTag?: string) {
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(searchParams?.toString() ?? "");
 
     if (query) {
       params.set("q", query);

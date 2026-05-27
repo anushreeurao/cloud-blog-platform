@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Menu, PenSquare, X } from "lucide-react";
 import { clearLocalBrowserSession } from "@/lib/supabase/auth-recovery";
 import { getBrowserSupabaseClient } from "@/lib/supabase/browser";
@@ -10,13 +10,11 @@ import { sanitizeInternalPath } from "@/lib/site-url";
 import { useAuthUser } from "@/hooks/use-auth-user";
 import { AuthModal } from "@/components/auth/auth-modal";
 import { ProfileMenu } from "@/components/layout/profile-menu";
-import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const links = [
   { href: "/", label: "Home" },
-  { href: "/u", label: "Writers" },
   { href: "/media", label: "Media" },
   { href: "/dashboard", label: "Dashboard" },
 ];
@@ -25,12 +23,15 @@ export function SiteHeader() {
   const { user, loading } = useAuthUser();
   const pathname = usePathname();
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const searchParams =
+    typeof window !== "undefined"
+      ? new URLSearchParams(window.location.search)
+      : null;
   const [authOpen, setAuthOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const currentPathWithQuery = useMemo(() => {
-    const query = searchParams.toString();
+    const query = searchParams?.toString() ?? "";
     const nextValue = `${pathname}${query ? `?${query}` : ""}`;
     return sanitizeInternalPath(nextValue, "/dashboard");
   }, [pathname, searchParams]);
@@ -71,7 +72,6 @@ export function SiteHeader() {
           </nav>
 
           <div className="hidden items-center gap-2 md:flex">
-            <ThemeToggle />
             {loading ? (
               <Skeleton className="h-10 w-24 rounded-full" />
             ) : user ? (
@@ -94,7 +94,6 @@ export function SiteHeader() {
         {mobileMenuOpen ? (
           <div className="border-t border-zinc-200 bg-[#f6f6f3] px-4 py-4 md:hidden dark:border-zinc-800 dark:bg-zinc-950">
             <div className="mb-4 flex items-center justify-between">
-              <ThemeToggle />
               {loading ? (
                 <Skeleton className="h-9 w-20 rounded-full" />
               ) : user ? (

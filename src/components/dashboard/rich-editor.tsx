@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { z } from "zod";
 import { getBrowserSupabaseClient } from "@/lib/supabase/browser";
@@ -22,9 +22,12 @@ const editorSchema = z.object({
 const DEFAULT_MARKDOWN = "# Start writing";
 
 export function RichEditor() {
-  const searchParams = useSearchParams();
   const router = useRouter();
-  const editingSlug = searchParams.get("slug");
+  const searchParams =
+    typeof window !== "undefined"
+      ? new URLSearchParams(window.location.search)
+      : null;
+  const editingSlug = searchParams?.get("slug") ?? null;
   const [postId, setPostId] = useState<string | null>(null);
   const [title, setTitle] = useState("");
   const [coverImage, setCoverImage] = useState("");
